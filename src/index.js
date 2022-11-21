@@ -66,6 +66,7 @@ window.addEventListener('scroll', onScrollWindow);
 
 formEl.addEventListener('submit', event => {
   event.preventDefault();
+  COUNTER = 1;
   clearMarkup();
 
   getImages()
@@ -73,6 +74,7 @@ formEl.addEventListener('submit', event => {
       const { hits: images, totalHits: totalAmount } = response;
 
       if (images.length === 0) {
+        loadMore.classList.add('not-visible');
         return Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );

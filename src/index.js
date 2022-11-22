@@ -1,13 +1,13 @@
+import { getImages } from './js/get_images';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
-import axios from 'axios';
 
 const gallery = document.querySelector('.gallery');
 const loadMore = document.querySelector('.load-more');
 const formEl = document.querySelector('#search-form');
-const {
+export const {
   elements: { searchQuery },
 } = formEl;
 
@@ -18,40 +18,18 @@ const lightbox = new SimpleLightbox('.photo-card__item', {
 
 function normalize(text) {
   searchQuery.value = searchQuery.value.trim().toLowerCase();
+  if (text === ' ') {
+    searchQuery.value += ' ';
+  }
 }
 
 searchQuery.addEventListener('input', event => {
   normalize(event.data);
 });
 
-let COUNTER = 1;
-let PER_PAGE = 40;
+export let COUNTER = 1;
+export let PER_PAGE = 40;
 let TOTAL_IMAGES = 0;
-
-async function getImages() {
-  try {
-    const searchParams = new URLSearchParams({
-      key: '31282764-0017d0f99317739c03b205fc8',
-      q: searchQuery.value.split(' ').join('+'),
-      image_type: 'photo',
-      orientation: 'horizontal',
-      safesearch: true,
-      page: `${COUNTER}`,
-      per_page: `${PER_PAGE}`,
-    });
-
-    const response = await axios.get(
-      `https://pixabay.com/api/?${searchParams}`
-    );
-
-    if (response.status !== 200) {
-      throw new Error(response.status);
-    }
-    return response.data;
-  } catch (error) {
-    error.message;
-  }
-}
 
 const onScrollWindow = debounce(() => {
   const { height: cardHeight } = gallery.firstChild.getBoundingClientRect();
@@ -66,6 +44,7 @@ window.addEventListener('scroll', onScrollWindow);
 
 formEl.addEventListener('submit', event => {
   event.preventDefault();
+  searchQuery.value = searchQuery.value.trim().toLowerCase();
   COUNTER = 1;
   clearMarkup();
 
